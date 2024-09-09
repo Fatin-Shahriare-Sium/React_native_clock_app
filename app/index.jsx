@@ -40,9 +40,7 @@ export default function App() {
     <SafeAreaView>
         <ScrollView>
             <TimerBox></TimerBox>
-            <View style={{backgroundColor:"blue",height:"50vh"}}>
-            <Image style={{width:70,height:80}} source={calx}/>
-            </View>
+          
         </ScrollView>
     </SafeAreaView>
   );

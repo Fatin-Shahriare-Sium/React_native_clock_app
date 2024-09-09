@@ -7,29 +7,55 @@ import useSetAlarm from '../hooks/useSetAlarm';
 import useDeleteNotification from '../hooks/useDeleteNotification';
 import useUpdateNotification from '../hooks/useUpdateNotification';
 import * as Notifications from 'expo-notifications';
+import useSchedule from '../hooks/useSechdule';
+import useScheduleEveryDay from '../hooks/useScheduleEveyday';
 const TimerBox = () => {  
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(true);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isDateTimeVisible, setDateTimeVisibility] = useState(true);
     let [pickTime,setPickTime]=useState("");
     let [pickTimeObj,setPickTimeObj]=useState(new Date());
     let [alarmOn,setAlarmOn]=useState(false);
     let [notificationId,setNotificationId]=useState("");
     let [alarmIdx,setAlarmIdx]=useState("");
+    let [scheduleDate,setScheduleDate]=useState("");
+    let [hasScheduled,setHasScheduled]=useState(false);
 
     Notifications.addNotificationResponseReceivedListener((notification) => {
-      console.log("recider fseji",notification);
-      useUpdateNotification(alarmIdx,notificationId);
+      // console.log("recider fseji",notification);
+      if(alarmIdx && notificationId && hasScheduled==false){
+        console.log("alarm set for tommoreow");
+        useScheduleEveryDay(alarmIdx,notification,pickTimeObj).then((res)=>{
+          console.log("alarm set for tommoreow");
+          
+        })
+      }
       
     });
+
+    let createAlarmOnFly=(pickTimeObj,localTime,dateForSchedule)=>{
+      console.log("response after create on fly alarmxyh",dateForSchedule);
+      useSetAlarm({alarmId:uuid.v4(),
+        alarmTimeObj:pickTimeObj,
+        alarmInLocalTime:localTime,alarmschedule:dateForSchedule}).then((res)=>{
+          setAlarmIdx(res.alarmId);
+          setNotificationId(res.notificationId);
+          setHasScheduled(res.alarmschedule==""?false:true);
+          setScheduleDate(res.alarmschedule);
+          console.log("response after create on alarm",res);
+          
+        })
+    }
+
     let handleAlarmSwitch=(e)=>{
         setAlarmOn(!alarmOn);
     console.log("e",e);
         if(e===true){
             useSetAlarm({alarmId:uuid.v4(),
               alarmTimeObj:pickTimeObj,
-              alarmInLocalTime:pickTime,alarmschedul:[]}).then((res)=>{
+              alarmInLocalTime:pickTime,alarmschedule:scheduleDate}).then((res)=>{
                 setAlarmIdx(res.alarmId)
                 setNotificationId(res.notificationId)
+                setHasScheduled(res.alarmschedule==""?false:true)
                 console.log("response after switc",res);
                 
               })
@@ -52,20 +78,31 @@ const TimerBox = () => {
     var local = moment(datex).local().format('hh:mm a');//("hh,mm") means am,pm and (HH,MM) MEANS 24 FORMAT
     setPickTime(local);
     console.log("timeComponent",local);
-    setDateTimeVisibility(!isDateTimeVisible)
+    setDateTimeVisibility(!isDateTimeVisible);
+    setAlarmOn(true);
+    createAlarmOnFly(datex,local,scheduleDate);
+
   };
   const handleConfirmDate = (datex) => {
-    console.log("A date has been picked: ", datex);
-    // setPickTimeObj(datex);
-    // var local = moment(datex).local().format('hh:mm a');//("hh,mm") means am,pm and (HH,MM) MEANS 24 FORMAT
-    // setPickTime(local);
-    // console.log("timeComponent",local);
-    // hideDatePicker();
+    console.log("A date calenderxx has been picked: ", datex);
+    // let day = moment(datex).format("MMM Do");  ;//("hh,mm") means am,pm and (HH,MM) MEANS 24 FORMAT
+    // console.log("datecomponet",day);
+    setDatePickerVisibility(!isDatePickerVisible);
+    if(alarmIdx==""){
+      setScheduleDate(datex);
+      console.log("doing seheduling uin change without alramn id",datex);
+    }else{
+      setScheduleDate(datex);
+      console.log("doing seheduling uin change",datex);
+      
+      useSchedule(alarmIdx,notificationId,datex)
+    }
+ 
   };
   return (
     <View style={styles.timerBoxWrapper}>
         <View>
-            <Text onPress={()=>setDateTimeVisibility(true)} style={styles.timeText}>{pickTime}</Text>
+            <Text onPress={()=>setDateTimeVisibility(true)} style={styles.timeText}>{pickTime==""?moment().local().format('hh:mm a'):pickTime}</Text>
             
         </View>
         <View>
@@ -79,19 +116,18 @@ const TimerBox = () => {
         </View>
         
       <Text>TimerBox</Text>
-      <View>
-      <Pressable style={{backgroundColor:"red",height:"40%"}} onPress={()=>setDatePickerVisibility(true)} >
-      <Text style={styles.schduleText}>{`Sehedule${alarmIdx}:${notificationId}`}</Text>
+      <View style={{margin:50}}>
+      <Text style={styles.schduleText}>{scheduleDate==""?"Everyday":moment(scheduleDate).format("MMM Do")}</Text>
+      <Text onPress={()=>setDatePickerVisibility(!isDatePickerVisible)} style={styles.schduleText}>{`Sehedule${alarmIdx}:${notificationId}`}</Text>
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleConfirmDate}
+        date={scheduleDate==""?new Date():scheduleDate}
         onCancel={()=>setDatePickerVisibility(!isDatePickerVisible)}
       />
-      </Pressable>
+   
       </View>
-      
-      <Pressable style={{backgroundColor:"red",height:"40%"}} onPress={()=>setDateTimeVisibility(true)} >
       
       <DateTimePickerModal
         isVisible={isDateTimeVisible}
@@ -101,7 +137,7 @@ const TimerBox = () => {
         is24Hour={false}
         date={pickTimeObj}
       />
-      </Pressable>
+    
     </View>
   )
 }

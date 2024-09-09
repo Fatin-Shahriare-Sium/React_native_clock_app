@@ -33,6 +33,7 @@ const useSetAlarm =async (alarmObj) => {
         alarmId:alarmObj.alarmId,
         alarmTimeObj:alarmObj.alarmTimeObj,
         alarmInLocalTime:alarmObj.alarmInLocalTime,
+        alarmschedule:alarmObj.alarmschedule,
         notificationId:idOfNotification
     }
    
