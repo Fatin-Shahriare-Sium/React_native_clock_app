@@ -4,8 +4,9 @@ import moment from 'moment';
 import useCreateNotification from './useCreateNotification';
 import useDeletNotification from './useDeleteNotification';
 let useUpdateNotification=async (alarmId,notiId,haveScheduleDate)=>{
-    let alarmObj=await AsyncStorage.getItem(alarmId);
 
+    let jsonAlarmObj=await AsyncStorage.getItem(alarmId);
+    let alarmObj=JSON.parse(jsonAlarmObj);
     console.log("alarmobj through alarm id use update notio",alarmObj);
     
     
@@ -47,3 +48,11 @@ let useUpdateNotification=async (alarmId,notiId,haveScheduleDate)=>{
 }
 
 export default useUpdateNotification;
+
+// let alarmObjx={
+//     alarmId:alarmObj.alarmId,
+//     alarmTimeObj:haveScheduleDate,
+//     alarmInLocalTime:alarmObj.alarmInLocalTime,
+//     alarmschedule:'',
+//     notificationId:idOfNotification
+// }

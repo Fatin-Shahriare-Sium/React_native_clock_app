@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View,Switch, Pressable, Alert } from 'react-native'
+import { StyleSheet, Text, View,Switch, Pressable, Alert,Image } from 'react-native'
 import React,{useState} from 'react'
 import uuid from 'react-native-uuid';
 import moment from 'moment';
@@ -9,6 +9,8 @@ import useUpdateNotification from '../hooks/useUpdateNotification';
 import * as Notifications from 'expo-notifications';
 import useSchedule from '../hooks/useSechdule';
 import useScheduleEveryDay from '../hooks/useScheduleEveyday';
+import calenLogo from "../assets/calender.png"
+import useConcateScheduleDateWithAlarmTime from '../hooks/useConcateScheduleDateWithAlarmTime';
 const TimerBox = () => {  
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isDateTimeVisible, setDateTimeVisibility] = useState(true);
@@ -35,12 +37,13 @@ const TimerBox = () => {
     let createAlarmOnFly=(pickTimeObj,localTime,dateForSchedule)=>{
       console.log("response after create on fly alarmxyh",dateForSchedule);
       useSetAlarm({alarmId:uuid.v4(),
-        alarmTimeObj:pickTimeObj,
+        alarmTimeObj:dateForSchedule==""?pickTimeObj:dateForSchedule,
         alarmInLocalTime:localTime,alarmschedule:dateForSchedule}).then((res)=>{
           setAlarmIdx(res.alarmId);
           setNotificationId(res.notificationId);
           setHasScheduled(res.alarmschedule==""?false:true);
           setScheduleDate(res.alarmschedule);
+          
           console.log("response after create on alarm",res);
           
         })
@@ -51,7 +54,7 @@ const TimerBox = () => {
     console.log("e",e);
         if(e===true){
             useSetAlarm({alarmId:uuid.v4(),
-              alarmTimeObj:pickTimeObj,
+              alarmTimeObj:scheduleDate==""?pickTimeObj:scheduleDate,
               alarmInLocalTime:pickTime,alarmschedule:scheduleDate}).then((res)=>{
                 setAlarmIdx(res.alarmId)
                 setNotificationId(res.notificationId)
@@ -88,6 +91,7 @@ const TimerBox = () => {
     // let day = moment(datex).format("MMM Do");  ;//("hh,mm") means am,pm and (HH,MM) MEANS 24 FORMAT
     // console.log("datecomponet",day);
     setDatePickerVisibility(!isDatePickerVisible);
+    setPickTimeObj(datex);
     if(alarmIdx==""){
       setScheduleDate(datex);
       console.log("doing seheduling uin change without alramn id",datex);
@@ -105,25 +109,28 @@ const TimerBox = () => {
             <Text onPress={()=>setDateTimeVisibility(true)} style={styles.timeText}>{pickTime==""?moment().local().format('hh:mm a'):pickTime}</Text>
             
         </View>
-        <View>
+        <View style={styles.switchWrapper}>
+        <Text  style={styles.schduleText}>{scheduleDate==""?"Everyday":moment(scheduleDate).format("MMM Do")}</Text>
                 <Switch
-                trackColor={{false: 'white', true: 'red'}}
-                thumbColor={"green"}
+                trackColor={{false: "#93a6c1", true: 'white'}}
+                thumbColor={alarmOn?"#f37171":"#98c698"}
                 onValueChange={handleAlarmSwitch}
                 value={alarmOn}
                 
             />
         </View>
-        
-      <Text>TimerBox</Text>
-      <View style={{margin:50}}>
-      <Text style={styles.schduleText}>{scheduleDate==""?"Everyday":moment(scheduleDate).format("MMM Do")}</Text>
-      <Text onPress={()=>setDatePickerVisibility(!isDatePickerVisible)} style={styles.schduleText}>{`Sehedule${alarmIdx}:${notificationId}`}</Text>
+      <View>
+
+        <Pressable style={styles.schduleBtnWrapper} onPress={()=>setDatePickerVisibility(!isDatePickerVisible)}>
+          <Image style={{height:20,width:20,backgroundColor:"#98c698"}} source={calenLogo} />
+        <Text  style={styles.schduleBtn}>Sehedule</Text>
+        </Pressable>
+      
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleConfirmDate}
-        date={scheduleDate==""?new Date():scheduleDate}
+        date={scheduleDate==""?pickTimeObj:scheduleDate}
         onCancel={()=>setDatePickerVisibility(!isDatePickerVisible)}
       />
    
@@ -146,20 +153,39 @@ export default TimerBox
 
 const styles = StyleSheet.create({
     timerBoxWrapper:{
-        backgroundColor:'black',
+        backgroundColor:'#1c1919',
         color:"white",
-        width:"90%"
+        width:"90%",
+        padding:15,
+        borderRadius:10
     },
     timeText:{
         color:"white",
-        textAlign:"center",
         fontSize:30,
-        fontWeight:"700"
+        fontWeight:"700",
+    },
+    switchWrapper:{
+      display:'flex',
+      flexDirection:"row",
+      justifyContent:"space-between",
+      alignItems:"center",
+      backgroundColor:"#1c1919"
     },
     schduleText:{
-      color:"white",
-      fontSize:30,
-      fontWeight:"700",
-      textAlign:'center'
+      color:"#f37171",
+      fontSize:17,
+      fontWeight:"500",
+    },
+    schduleBtn:{
+      color:"#f37171",
+      fontSize:15,
+      fontWeight:"500",
+      marginLeft:"3%"
+    },
+    schduleBtnWrapper:{
+      display:"flex",
+      justifyContent:"flex-start",
+      alignItems:"center",
+      flexDirection:"row",
     }
 })
