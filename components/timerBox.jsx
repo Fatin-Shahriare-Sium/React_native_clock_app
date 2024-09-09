@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View,Switch, Pressable, Alert,Image } from 'react-native'
-import React,{useState} from 'react'
+import { StyleSheet, Text, View,Switch, Pressable, Alert,Image ,Dimensions} from 'react-native'
+import React,{useEffect, useState} from 'react'
 import uuid from 'react-native-uuid';
 import moment from 'moment';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -11,25 +11,54 @@ import useSchedule from '../hooks/useSechdule';
 import useScheduleEveryDay from '../hooks/useScheduleEveyday';
 import calenLogo from "../assets/calender.png"
 import useConcateScheduleDateWithAlarmTime from '../hooks/useConcateScheduleDateWithAlarmTime';
-const TimerBox = () => {  
+import { useClockData } from '../context/clockContextProvider';
+import useOffAlarm from '../hooks/useOffAlarm';
+const TimerBox = ({alarmDataObj}) => {  
+    let {tiggerReloadData}=useClockData();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [isDateTimeVisible, setDateTimeVisibility] = useState(true);
+    const [isDateTimeVisible, setDateTimeVisibility] = useState(false);
     let [pickTime,setPickTime]=useState("");
     let [pickTimeObj,setPickTimeObj]=useState(new Date());
-    let [alarmOn,setAlarmOn]=useState(false);
+    let [alarmOn,setAlarmOn]=useState(true);
     let [notificationId,setNotificationId]=useState("");
     let [alarmIdx,setAlarmIdx]=useState("");
     let [scheduleDate,setScheduleDate]=useState("");
     let [hasScheduled,setHasScheduled]=useState(false);
+    let [isEveryDay,setIsEveryDay]=useState(true);
+    ///IMPELEMET EVERYDAY ALARM
+
+    useEffect(()=>{
+      setAlarmIdx(alarmDataObj.alarmId);
+      setPickTimeObj(new Date(alarmDataObj.alarmTimeObj));
+      setPickTime(moment(alarmDataObj.alarmTimeObj).local().format('hh:mm a'))
+      setScheduleDate(new Date(alarmDataObj.alarmTimeObj));
+      setNotificationId(alarmDataObj.notificationId)
+      setIsEveryDay(alarmDataObj.isAlarmEveryDay)
+      setAlarmOn(alarmDataObj.isAlarmOnData);
+     console.log( "today getting",alarmDataObj.alarmTimeObj);
+     const dateIsBefore = moment(alarmDataObj.alarmTimeObj).isBefore(moment(new Date()));
+     console.log("checking switvh state",dateIsBefore,moment(alarmDataObj.alarmTimeObj).local().format('hh:mm a'));
+     
+     if(dateIsBefore==true){
+      console.log("setAlarmOn(false)");
+      
+      setAlarmOn(false)
+     }
+
+    },[])
+
 
     Notifications.addNotificationResponseReceivedListener((notification) => {
       // console.log("recider fseji",notification);
-      if(alarmIdx && notificationId && hasScheduled==false){
+      //IMCORECT NEED EVEVRYDAY
+      if(alarmIdx && notificationId && isEveryDay ){
         console.log("alarm set for tommoreow");
         useScheduleEveryDay(alarmIdx,notification,pickTimeObj).then((res)=>{
           console.log("alarm set for tommoreow");
-          
+          tiggerReloadData()
         })
+      }else{
+        useOffAlarm(alarmIdx);
       }
       
     });
@@ -38,11 +67,11 @@ const TimerBox = () => {
       console.log("response after create on fly alarmxyh",dateForSchedule);
       useSetAlarm({alarmId:uuid.v4(),
         alarmTimeObj:dateForSchedule==""?pickTimeObj:dateForSchedule,
-        alarmInLocalTime:localTime,alarmschedule:dateForSchedule}).then((res)=>{
+        alarmEveryday:true,
+        isAlarmOnData:true
+        }).then((res)=>{
           setAlarmIdx(res.alarmId);
           setNotificationId(res.notificationId);
-          setHasScheduled(res.alarmschedule==""?false:true);
-          setScheduleDate(res.alarmschedule);
           
           console.log("response after create on alarm",res);
           
@@ -55,15 +84,15 @@ const TimerBox = () => {
         if(e===true){
             useSetAlarm({alarmId:uuid.v4(),
               alarmTimeObj:scheduleDate==""?pickTimeObj:scheduleDate,
-              alarmInLocalTime:pickTime,alarmschedule:scheduleDate}).then((res)=>{
+              alarmEveryday:true,isAlarmOnData:true}).then((res)=>{
                 setAlarmIdx(res.alarmId)
                 setNotificationId(res.notificationId)
-                setHasScheduled(res.alarmschedule==""?false:true)
                 console.log("response after switc",res);
                 
               })
             Alert.alert("Alarm has been set")
         }else if(alarmIdx!==""||notificationId!==""){
+          useOffAlarm(alarmIdx);
           useDeleteNotification(alarmIdx,notificationId).then((res)=>{
             Alert.alert("Alarm is off")
           })
@@ -78,12 +107,13 @@ const TimerBox = () => {
   const handleConfirmTime = (datex) => {
     console.log("A date has been picked: ", datex);
     setPickTimeObj(datex);
+    setScheduleDate(datex);
     var local = moment(datex).local().format('hh:mm a');//("hh,mm") means am,pm and (HH,MM) MEANS 24 FORMAT
     setPickTime(local);
     console.log("timeComponent",local);
     setDateTimeVisibility(!isDateTimeVisible);
     setAlarmOn(true);
-    createAlarmOnFly(datex,local,scheduleDate);
+    createAlarmOnFly(datex,local,datex);
 
   };
   const handleConfirmDate = (datex) => {
@@ -92,13 +122,13 @@ const TimerBox = () => {
     // console.log("datecomponet",day);
     setDatePickerVisibility(!isDatePickerVisible);
     setPickTimeObj(datex);
-    if(alarmIdx==""){
+    setIsEveryDay(false);
+    if(alarmOn==false){
       setScheduleDate(datex);
       console.log("doing seheduling uin change without alramn id",datex);
     }else{
       setScheduleDate(datex);
       console.log("doing seheduling uin change",datex);
-      
       useSchedule(alarmIdx,notificationId,datex)
     }
  
@@ -110,7 +140,7 @@ const TimerBox = () => {
             
         </View>
         <View style={styles.switchWrapper}>
-        <Text  style={styles.schduleText}>{scheduleDate==""?"Everyday":moment(scheduleDate).format("MMM Do")}</Text>
+        <Text  style={styles.schduleText}>{isEveryDay==true?"Everyday":moment(scheduleDate).format("MMM Do")}</Text>
                 <Switch
                 trackColor={{false: "#93a6c1", true: 'white'}}
                 thumbColor={alarmOn?"#f37171":"#98c698"}
@@ -130,7 +160,7 @@ const TimerBox = () => {
         isVisible={isDatePickerVisible}
         mode="date"
         onConfirm={handleConfirmDate}
-        date={scheduleDate==""?pickTimeObj:scheduleDate}
+        date={pickTimeObj}
         onCancel={()=>setDatePickerVisibility(!isDatePickerVisible)}
       />
    
@@ -149,15 +179,16 @@ const TimerBox = () => {
   )
 }
 
-export default TimerBox
+export default TimerBox;
 
 const styles = StyleSheet.create({
     timerBoxWrapper:{
         backgroundColor:'#1c1919',
         color:"white",
-        width:"90%",
         padding:15,
-        borderRadius:10
+        width:"100%",
+        borderRadius:10,
+        marginTop:"3%"
     },
     timeText:{
         color:"white",

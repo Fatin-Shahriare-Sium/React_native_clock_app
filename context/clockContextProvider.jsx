@@ -1,12 +1,17 @@
 import { View, Text } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, createContext,useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-let ClockContext=React.createContext({alarmData:[]});
-export let useClockData=()=>{useContext(ClockContext)};
+let ClockContext=createContext();
+console.log("clock context in provider main",ClockContext);
+
+export let useClockData=()=>useContext(ClockContext);
 const ClockContextProvider = ({children}) => {
     let [alarmDataArray,setAlarmDataArray]=useState([]);
+    let [needReload,setNeedReload]=useState(false)
     useEffect(()=>{
+   
         AsyncStorage.getAllKeys((err, keys) => {
+      
             AsyncStorage.multiGet(keys, (err, stores) => {
                 console.log("keys",keys.length);
                 let keyesLength=keys.length
@@ -25,7 +30,6 @@ const ClockContextProvider = ({children}) => {
                     
                 console.log(keepDataArray);
                 setAlarmDataArray([...keepDataArray]);
-                console.log("alarmDataArray",alarmDataArray);
               }
               });
             
@@ -33,10 +37,14 @@ const ClockContextProvider = ({children}) => {
             });
           });
     
-          console.log("alarmDataArray",alarmDataArray);
-    },[])
+          
+    },[needReload])
+    let tiggerReloadData=()=>{
+      setNeedReload(!needReload);
+    }
   return (
-    <ClockContext.Provider value={{alarmData:alarmDataArray}}>
+    <ClockContext.Provider value={{alarmData:alarmDataArray,setAlarmDataArrayFuc:setAlarmDataArray,tiggerReloadData}}>
+        {console.log("alarmDataArray in main settinhxsdyhc",alarmDataArray)}
     {children}
     </ClockContext.Provider>
   )

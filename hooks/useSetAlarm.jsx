@@ -27,14 +27,16 @@ const storeData = async (value) => {
 };
 
 const useSetAlarm =async (alarmObj) => {
+  console.log("LOG OF ALARM OBJ WHWN CREAET",alarmObj);
+  
   let idOfNotification=await useCreateNotification(alarmObj.alarmTimeObj);
     getData();
   let alarmObjx={
         alarmId:alarmObj.alarmId,
         alarmTimeObj:alarmObj.alarmTimeObj,
-        alarmInLocalTime:alarmObj.alarmInLocalTime,
-        alarmschedule:alarmObj.alarmschedule,
-        notificationId:idOfNotification
+        notificationId:idOfNotification,
+        isAlarmEveryDay:alarmObj.alarmEveryday,
+        isAlarmOnData:alarmObj.isAlarmOnData
     }
    
    let result= await storeData(alarmObjx);
