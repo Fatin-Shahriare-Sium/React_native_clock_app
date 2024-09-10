@@ -1,15 +1,14 @@
-import { LogBox, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { LogBox, StyleSheet } from 'react-native'
 import React, { useEffect } from 'react'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import ClockContextProvider, { useClockData } from '../context/clockContextProvider'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import ClockContextProvider from '../context/clockContextProvider'
 import { Stack } from 'expo-router'
 
 
-const _layout = () => {
-    let x=useClockData();
-    useEffect(()=>{
-        console.log("layout alamr data",x);
 
+const _layout = () => {
+
+    useEffect(()=>{
         LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
 
     },[])
@@ -17,7 +16,7 @@ const _layout = () => {
     <ClockContextProvider>
           <SafeAreaView style={{height:"100%",width:"100%",}}>
             <Stack screenOptions={{headerShown:false}}>
-              
+              <Stack.Screen name='timerCountDown' options={{headerShown:false}} />
             </Stack>
            
            

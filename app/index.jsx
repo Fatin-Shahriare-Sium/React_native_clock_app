@@ -5,14 +5,18 @@ import { useClockData } from '../context/clockContextProvider';
 import { useEffect, useState } from 'react';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import uuid from 'react-native-uuid';
-import addIcon from '../assets/add.png'
 import useSetAlarm from '../hooks/useSetAlarm';
-import moment from 'moment';
+import { router } from 'expo-router';
+import CustomAddBtn from '../components/customAdd';
+
 export default function App() {
+  
  let {alarmData,setAlarmDataArrayFuc,tiggerReloadData}=useClockData();
  let [showPicker,setShowPicker]=useState(false);
  let [refreshFlatList,setRefreshFlatList]=useState(false)
+
   let handleCreateAlarm=(date)=>{
+
     console.log("picked time when click ad icon",date);
     
     useSetAlarm({alarmId:uuid.v4(),
@@ -30,6 +34,7 @@ export default function App() {
         }),
       });
  useEffect(()=>{
+
   console.log("in timer box",alarmData)
  },[alarmData])
 //Flatlist don't render automatically when data changes
@@ -37,17 +42,17 @@ export default function App() {
   return (
     <SafeAreaView style={{width:"100%",height:"100%",position:"relative"}}>
         <ScrollView >
-          
+          <Text onPress={()=>{router.push('/timerCountDown')}}>Timer</Text>
            <View >
               <View>
-                
+               
                 <FlatList
                 contentContainerStyle={styles.alarmBoxContainer}
                 data={alarmData}
                 key={(item)=>item.alarmId}
                 keyExtractor={item => item.alarmId}
                 renderItem={(sig)=>(<View style={{width:Dimensions.get('window').width*.9}}><TimerBox alarmDataObj={(sig.item)} /></View>)}
-                extraData={refreshFlatList}
+                refreshing={refreshFlatList}
                 ListHeaderComponent={()=>{}}
                 />
               
@@ -56,19 +61,16 @@ export default function App() {
             
            </View>
         </ScrollView>
-        <View style={{position:"absolute",zIndex:200,top:Dimensions.get('window').height*.7,left:Dimensions.get('window').width*.42}} > 
-              <DateTimePickerModal
+        <CustomAddBtn handleAddBtn={()=>setShowPicker(!showPicker)}>
+
+        </CustomAddBtn>
+        <DateTimePickerModal
                   isVisible={showPicker}
                   mode="time"
                   onConfirm={handleCreateAlarm}
                   onCancel={()=>setShowPicker(!showPicker)}
                   is24Hour={false} />
 
-            <Pressable style={styles.addBtnContainer}  onPress={()=>setShowPicker(!showPicker)}>
-                <Image style={{width:50,height:50}} source={addIcon}/>
-                </Pressable>
-          
-              </View>
     </SafeAreaView>
   );
 }
@@ -83,10 +85,5 @@ const styles = StyleSheet.create({
     position:"relative",
 
    
-  },
-  addBtnContainer:{
-    backgroundColor:"#98c698",
-    borderRadius:50,
-    padding:10
   }
 });
