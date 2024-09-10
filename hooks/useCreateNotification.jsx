@@ -1,9 +1,5 @@
 import * as Notifications from 'expo-notifications';
 
-
-
-
-
 export async function doingNotificationSchedule(pickTimeObj) {
 
   
@@ -12,13 +8,13 @@ export async function doingNotificationSchedule(pickTimeObj) {
     name: 'General NotificationsXXXXXX',
     importance: Notifications.AndroidImportance.MAX,
     vibrationPattern: [0, 250, 250, 250],
-    sound: 'ringtone.wav',
+    sound:"ringtone.wav",
+
   });
   const identifier = await Notifications.scheduleNotificationAsync({
       content: {
         title: "Alarm",
         body: "It is time to wake up!",
-       
       },
       trigger: {
         date:pickTimeObj,

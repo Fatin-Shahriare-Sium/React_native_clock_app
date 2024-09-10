@@ -9,7 +9,7 @@ const ClockContextProvider = ({children}) => {
     let [alarmDataArray,setAlarmDataArray]=useState([]);
     let [needReload,setNeedReload]=useState(false)
     useEffect(()=>{
-   
+    
         AsyncStorage.getAllKeys((err, keys) => {
       
             AsyncStorage.multiGet(keys, (err, stores) => {
@@ -40,7 +40,9 @@ const ClockContextProvider = ({children}) => {
           
     },[needReload])
     let tiggerReloadData=()=>{
-      setNeedReload(!needReload);
+      console.log("tiggerReloadData");
+      
+      return setNeedReload(!needReload);
     }
   return (
     <ClockContext.Provider value={{alarmData:alarmDataArray,setAlarmDataArrayFuc:setAlarmDataArray,tiggerReloadData}}>

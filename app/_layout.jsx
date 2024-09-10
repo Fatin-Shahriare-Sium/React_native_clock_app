@@ -9,11 +9,13 @@ const _layout = () => {
     let x=useClockData();
     useEffect(()=>{
         console.log("layout alamr data",x);
-        
+
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+
     },[])
   return (
     <ClockContextProvider>
-          <SafeAreaView style={{height:"100%",width:"100%"}}>
+          <SafeAreaView style={{height:"100%",width:"100%",}}>
             <Stack screenOptions={{headerShown:false}}>
               
             </Stack>
