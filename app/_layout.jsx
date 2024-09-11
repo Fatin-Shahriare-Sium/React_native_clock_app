@@ -1,9 +1,12 @@
-import { LogBox, StyleSheet } from 'react-native'
+import { LogBox, StyleSheet,Image,View } from 'react-native'
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ClockContextProvider from '../context/clockContextProvider'
-import { Stack } from 'expo-router'
-
+import { Stack, Tabs } from 'expo-router'
+import clockIocn from "../assets/clock.png"
+import timerIcon from "../assets/timer.png"
+import stopWatchIcon from "../assets/stopWatch.png"
+import CustomTabIcon from '../components/customTabIcon'
 
 
 const _layout = () => {
@@ -14,12 +17,24 @@ const _layout = () => {
     },[])
   return (
     <ClockContextProvider>
-          <SafeAreaView style={{height:"100%",width:"100%",}}>
-            <Stack screenOptions={{headerShown:false}}>
-              <Stack.Screen name='timerCountDown' options={{headerShown:false}} />
-            </Stack>
-           
-           
+          <SafeAreaView style={{height:"100%",width:"100%"}}>
+  
+           <Tabs screenOptions={{
+              tabBarStyle:styles.customTabBar,
+              tabBarShowLabel:false,
+            }}>
+                  <Tabs.Screen name='index'  options={{headerShown:false,tabBarIcon:({focused})=>{
+                  return (<CustomTabIcon icon={clockIocn} foused={focused}  tabName="Alarm" />)
+                  }}}></Tabs.Screen>
+
+                  <Tabs.Screen name='stopWatch' options={{headerShown:false,tabBarIcon:({focused})=>{
+                  return (<CustomTabIcon icon={stopWatchIcon} foused={focused}  tabName="Stopwatch" />)}}}>
+                  </Tabs.Screen>
+
+                  <Tabs.Screen name='timerCountDown' options={{headerShown:false,title:"Timer",tabBarIcon:({focused})=>{
+                  return (<CustomTabIcon icon={timerIcon} foused={focused}  tabName="Timer" />)}}}>
+                  </Tabs.Screen>
+            </Tabs>
           </SafeAreaView>
     </ClockContextProvider>
          
@@ -29,4 +44,9 @@ const _layout = () => {
 
 export default _layout
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  customTabBar:{
+    backgroundColor:"#1c1919",//
+    height:80
+  }
+})

@@ -43,6 +43,7 @@ export default function App() {
     <SafeAreaView style={{width:"100%",height:"100%",position:"relative"}}>
         <ScrollView >
           <Text onPress={()=>{router.push('/timerCountDown')}}>Timer</Text>
+          <Text onPress={()=>router.push("/stopWatch")}>Stop</Text>
            <View >
               <View>
                
@@ -50,7 +51,7 @@ export default function App() {
                 contentContainerStyle={styles.alarmBoxContainer}
                 data={alarmData}
                 key={(item)=>item.alarmId}
-                keyExtractor={item => item.alarmId}
+                keyExtractor={(item) => item.alarmId}
                 renderItem={(sig)=>(<View style={{width:Dimensions.get('window').width*.9}}><TimerBox alarmDataObj={(sig.item)} /></View>)}
                 refreshing={refreshFlatList}
                 ListHeaderComponent={()=>{}}

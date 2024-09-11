@@ -3,7 +3,7 @@ import * as Notifications from 'expo-notifications';
 export async function doingNotificationSchedule(pickTimeObj) {
 
   
-  
+ 
   await Notifications.setNotificationChannelAsync('general', {
     name: 'General NotificationsXXXXXX',
     importance: Notifications.AndroidImportance.MAX,

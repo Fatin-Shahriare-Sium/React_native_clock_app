@@ -7,16 +7,17 @@ console.log("clock context in provider main",ClockContext);
 export let useClockData=()=>useContext(ClockContext);
 const ClockContextProvider = ({children}) => {
     let [alarmDataArray,setAlarmDataArray]=useState([]);
+    let [timerDataArray,setTimerDataArray]=useState([]);
     let [needReload,setNeedReload]=useState(false)
     useEffect(()=>{
-    
+          
         AsyncStorage.getAllKeys((err, keys) => {
-      
+          
             AsyncStorage.multiGet(keys, (err, stores) => {
                 console.log("keys",keys.length);
                 let keyesLength=keys.length
-                let keepDataArray=[];
-                
+                let keepDataArrayofAlarm=[];
+                let keepDataArrayOfTimer=[]
               stores.map((result, i, store) => {
                 // get at each store's key/value so you can work with it
                 let key = store[i][0];
@@ -24,12 +25,17 @@ const ClockContextProvider = ({children}) => {
                 console.log(i);
                 
                 // console.log("value in stirage",value);
-                keepDataArray.push(JSON.parse(value))
+                let parseValueofData=JSON.parse(value)
+                if(parseValueofData.alarmId){
+                  keepDataArrayofAlarm.push(parseValueofData)
+                }else{
+                  keepDataArrayOfTimer.push(parseValueofData)
+                }
                 if(keys.length==i+1){
                     console.log("I=",i+1);
-                    
-                console.log(keepDataArray);
-                setAlarmDataArray([...keepDataArray]);
+              
+                setAlarmDataArray([...keepDataArrayofAlarm]);
+                setTimerDataArray([...keepDataArrayOfTimer])
               }
               });
             
@@ -45,7 +51,7 @@ const ClockContextProvider = ({children}) => {
       return setNeedReload(!needReload);
     }
   return (
-    <ClockContext.Provider value={{alarmData:alarmDataArray,setAlarmDataArrayFuc:setAlarmDataArray,tiggerReloadData}}>
+    <ClockContext.Provider value={{alarmData:alarmDataArray,timerData:timerDataArray,tiggerReloadData}}>
         {console.log("alarmDataArray in main settinhxsdyhc",alarmDataArray)}
     {children}
     </ClockContext.Provider>

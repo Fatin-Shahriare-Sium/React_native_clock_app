@@ -57,7 +57,7 @@ const CreateTimerModal = ({handleModalFunc,isModalShow}) => {
             </View>
 
             <View style={{bottom:70,backgroundColor:"red",padding:3,borderRadius:5}}>
-                     <TouchableOpacity onPress={()=>handleModalFunc({...collectTimeObj,timerId:uuid.v4(),whereThePause:""})}>
+                     <TouchableOpacity onPress={()=>handleModalFunc({...collectTimeObj,timerTitle:collectTimeObj,timerId:uuid.v4()})}>
                         <Text style={styles.addBtn}>Add Timer</Text>
                         </TouchableOpacity>
             </View>
