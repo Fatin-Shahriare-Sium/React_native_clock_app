@@ -41,6 +41,7 @@ export default function App() {
 //need to extraData and keyExtractor property,two needs to implement to re-render
   return (
     <SafeAreaView style={{width:"100%",height:"100%",position:"relative"}}>
+      <Text style={{fontSize:30,fontWeight:"700",color:"white",marginLeft:"3%",marginTop:"2%"}}>Alarm</Text>
         <ScrollView >
           <Text onPress={()=>{router.push('/timerCountDown')}}>Timer</Text>
           <Text onPress={()=>router.push("/stopWatch")}>Stop</Text>

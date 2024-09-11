@@ -1,4 +1,5 @@
-import { LogBox, StyleSheet,Image,View } from 'react-native'
+import { LogBox, StyleSheet,Image,View, Platform } from 'react-native'
+import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import ClockContextProvider from '../context/clockContextProvider'
@@ -10,16 +11,18 @@ import CustomTabIcon from '../components/customTabIcon'
 
 
 const _layout = () => {
-
+ 
     useEffect(()=>{
         LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-
+      
+  
     },[])
   return (
     <ClockContextProvider>
-          <SafeAreaView style={{height:"100%",width:"100%"}}>
-  
-           <Tabs screenOptions={{
+     
+          <SafeAreaView edges={["top"]}  style={{height:"100%",width:"100%"}}>
+          <StatusBar translucent={true} style='dark' />
+           <Tabs sceneContainerStyle={{backgroundColor:"black"}} screenOptions={{
               tabBarStyle:styles.customTabBar,
               tabBarShowLabel:false,
             }}>

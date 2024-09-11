@@ -54,6 +54,7 @@ const ClockContextProvider = ({children}) => {
     <ClockContext.Provider value={{alarmData:alarmDataArray,timerData:timerDataArray,tiggerReloadData}}>
         {console.log("alarmDataArray in main settinhxsdyhc",alarmDataArray)}
     {children}
+    
     </ClockContext.Provider>
   )
 }

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View,Modal,TextInput,Dimensions, TouchableOpacity  } from 'react-native'
 import React, { useState } from 'react'
 import uuid from 'react-native-uuid'
-const CreateTimerModal = ({handleModalFunc,isModalShow}) => {
+const CreateTimerModal = ({handleModalFunc,isModalShow,setIsModalShow}) => {
     const ref = React.useRef();
     let [collectTimeObj,setCollectTimeObj]=useState({hours:0,minutes:0,seconds:0});
     let updateCollectTime=(value,type)=>{
@@ -30,7 +30,7 @@ const CreateTimerModal = ({handleModalFunc,isModalShow}) => {
                     onChangeText={(val)=>{updateCollectTime(val,"hours")}}
                     maxLength={2}  //setting limit of input
                 />
-                <Text>H</Text>
+                <Text style={{color:"white",fontWeight:"500",fontSize:15}}>h</Text>
                 </View>
                 <View style={styles.timerInputBoxOneWrapper}>
                 <TextInput 
@@ -40,7 +40,7 @@ const CreateTimerModal = ({handleModalFunc,isModalShow}) => {
                     onChangeText={(e)=>{updateCollectTime(e,"minutes")}}
                     maxLength={2}  //setting limit of input
                 />
-                <Text>m</Text>
+                <Text style={{color:"white",fontWeight:"500",fontSize:15}}>m</Text>
                 </View>
                 <View style={styles.timerInputBoxOneWrapper}>
                 <TextInput 
@@ -51,14 +51,18 @@ const CreateTimerModal = ({handleModalFunc,isModalShow}) => {
                     maxLength={2}  //setting limit of input
                      
                 />
-                <Text>s</Text>
+                <Text style={{color:"white",fontWeight:"500",fontSize:15}}>s</Text>
                 </View>
 
             </View>
 
-            <View style={{bottom:70,backgroundColor:"red",padding:3,borderRadius:5}}>
+            <View style={{bottom:70}}>
                      <TouchableOpacity onPress={()=>handleModalFunc({...collectTimeObj,timerTitle:collectTimeObj,timerId:uuid.v4()})}>
                         <Text style={styles.addBtn}>Add Timer</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity onPress={()=>setIsModalShow(false)}>
+                            <Text style={styles.cancelBtn}>Cancel</Text>
                         </TouchableOpacity>
             </View>
 
@@ -78,6 +82,7 @@ const styles = StyleSheet.create({
         display:"flex",
         justifyContent:"center",
         alignItems:"center",
+        backgroundColor:"black"
         
     },
     timerInputBoxWrapper:{
@@ -100,7 +105,18 @@ const styles = StyleSheet.create({
         borderRadius:3
     },
     addBtn:{
-        backgroundColor:"red",
+        backgroundColor:"white",
         fontWeight:"500",
+        margin:7,
+        padding:5,
+        borderRadius:7
+        
+    },
+    cancelBtn:{
+        backgroundColor:"#f37171",
+        fontWeight:"500",
+        margin:7,
+        padding:5,
+        borderRadius:7
     }
 })

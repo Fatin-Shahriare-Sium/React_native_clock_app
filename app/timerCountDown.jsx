@@ -15,6 +15,7 @@ const TimeCountDown = () => {
     let [countTimeObj,setCountTimeObj]=useState({hours:2,minutes:30,seconds:30});
     let [isModalVisible,setIsModalVisible]=useState(false);
     let [refreshList,setRefreshList]=useState(false)
+    
     useEffect(()=>{
     console.log("use effect trying to read timer data",timerData);
     
@@ -35,8 +36,9 @@ const TimeCountDown = () => {
     
   return (
     <SafeAreaView style={{width:"100%",height:"100%",position:"relative"}} >
+      <Text style={{fontSize:30,fontWeight:"700",color:"white",marginLeft:"3%",marginTop:"2%"}}>Timer</Text>
       <ScrollView>
-      <View>
+      <View style={{display:"flex",justifyContent:"center",alignItems:"center"}}>
        <FlatList
           data={timerData}
           key={(item)=>item.timerId}
@@ -47,7 +49,7 @@ const TimeCountDown = () => {
         />
       </View>
       </ScrollView>
-      <CreateTimerModal handleModalFunc={handleModal} isModalShow={isModalVisible}></CreateTimerModal>
+      <CreateTimerModal handleModalFunc={handleModal} isModalShow={isModalVisible} setIsModalShow={setIsModalVisible}></CreateTimerModal>
       <CustomAddBtn handleAddBtn={()=>{setIsModalVisible(!isModalVisible)}}></CustomAddBtn>
       
     </SafeAreaView>

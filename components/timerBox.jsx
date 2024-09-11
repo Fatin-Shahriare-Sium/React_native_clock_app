@@ -12,7 +12,9 @@ import useScheduleEveryDay from '../hooks/useScheduleEveyday';
 import calenLogo from "../assets/calender.png"
 import useConcateScheduleDateWithAlarmTime from '../hooks/useConcateScheduleDateWithAlarmTime';
 import { useClockData } from '../context/clockContextProvider';
+import deleteBtn from "../assets/delete.png"
 import useOffAlarm from '../hooks/useOffAlarm';
+import useDeleteAlarm from '../hooks/useDeleteAlarm';
 const TimerBox = ({alarmDataObj}) => {  
     let {tiggerReloadData}=useClockData();
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -133,6 +135,13 @@ const TimerBox = ({alarmDataObj}) => {
     }
  
   };
+
+  let handleDelete=()=>{
+    useDeleteAlarm(alarmDataObj.alarmId,alarmDataObj.notificationId);
+    tiggerReloadData()
+  }
+
+
   return (
     <View style={styles.timerBoxWrapper}>
         <View>
@@ -151,10 +160,17 @@ const TimerBox = ({alarmDataObj}) => {
         </View>
       <View>
 
-        <Pressable style={styles.schduleBtnWrapper} onPress={()=>setDatePickerVisibility(!isDatePickerVisible)}>
-          <Image style={{height:20,width:20,backgroundColor:"#98c698"}} source={calenLogo} />
-        <Text  style={styles.schduleBtn}>Sehedule</Text>
-        </Pressable>
+            <View>
+                <Pressable style={styles.schduleBtnWrapper} onPress={()=>setDatePickerVisibility(!isDatePickerVisible)}>
+                      <Image style={{height:20,width:20,backgroundColor:"#98c698"}} source={calenLogo} />
+                      <Text  style={styles.schduleBtn}>Sehedule</Text>
+                </Pressable>
+                <Pressable style={styles.schduleBtnWrapper} onPress={()=>handleDelete()}>
+                      <Image style={{height:20,width:20,backgroundColor:"#98c698",marginTop:5}} source={deleteBtn} />
+                      <Text  style={styles.schduleBtn}>Delete</Text>
+                </Pressable>
+            </View>
+        
       
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
@@ -188,7 +204,6 @@ const styles = StyleSheet.create({
         padding:15,
         width:"100%",
         borderRadius:10,
-        marginTop:"3%"
     },
     timeText:{
         color:"white",
