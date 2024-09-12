@@ -201,9 +201,10 @@ const styles = StyleSheet.create({
     timerBoxWrapper:{
         backgroundColor:'#1c1919',
         color:"white",
-        padding:15,
+        padding:10,
         width:"100%",
         borderRadius:10,
+        margin:5
     },
     timeText:{
         color:"white",
