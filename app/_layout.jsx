@@ -19,9 +19,8 @@ const _layout = () => {
     },[])
   return (
     <ClockContextProvider>
-     
+     <StatusBar style="light" hidden={true} />
           <SafeAreaView edges={["top"]}  style={{height:"100%",width:"100%"}}>
-          <StatusBar translucent={true} style='dark' />
            <Tabs sceneContainerStyle={{backgroundColor:"black"}} screenOptions={{
               tabBarStyle:styles.customTabBar,
               tabBarShowLabel:false,

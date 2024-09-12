@@ -1,8 +1,7 @@
-import { View, Text } from 'react-native'
 import React, { useContext, createContext,useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LogBox } from 'react-native';
 let ClockContext=createContext();
-console.log("clock context in provider main",ClockContext);
 
 export let useClockData=()=>useContext(ClockContext);
 const ClockContextProvider = ({children}) => {
@@ -10,7 +9,8 @@ const ClockContextProvider = ({children}) => {
     let [timerDataArray,setTimerDataArray]=useState([]);
     let [needReload,setNeedReload]=useState(false)
     useEffect(()=>{
-          
+     
+        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
         AsyncStorage.getAllKeys((err, keys) => {
           
             AsyncStorage.multiGet(keys, (err, stores) => {
@@ -45,18 +45,22 @@ const ClockContextProvider = ({children}) => {
     
           
     },[needReload])
+
     let tiggerReloadData=()=>{
       console.log("tiggerReloadData");
       
       return setNeedReload(!needReload);
     }
+
   return (
     <ClockContext.Provider value={{alarmData:alarmDataArray,timerData:timerDataArray,tiggerReloadData}}>
         {console.log("alarmDataArray in main settinhxsdyhc",alarmDataArray)}
-    {children}
-    
+ 
+        {children}
+        
     </ClockContext.Provider>
   )
 }
 
-export default ClockContextProvider
+export default ClockContextProvider;
+

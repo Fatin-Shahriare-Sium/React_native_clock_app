@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,Pressable,Image, Dimensions } from 'react-native'
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useRef } from 'react'
 import playBtn from "../assets/play.png"
 import pauseBtn from "../assets/pause.png"
 import resetBtn from "../assets/reset.png"
@@ -12,35 +12,40 @@ const CountDownBox = ({countTimeObj}) => {
   let [startTimer,setStartTimer]=useState(false);
   let [preTimerObj,setPreTimerObj]=useState({...countTimeObj});
   let [timerObj,setTimerObj]=useState({...countTimeObj});
+  let interValRef=useRef(null)
+  let preTime=useRef(0)
+  let countDownTimeInSeconds=useRef(Math.floor(preTimerObj.hours*3600)+Math.floor(preTimerObj.minutes*60)+Math.floor(preTimerObj.seconds))
+
   useEffect(()=>{
-    console.log("countTimeObj",countTimeObj);
-    let x=setInterval(()=>{
     if(startTimer==true){
-        setTimerObj({...timerObj,seconds:timerObj.seconds>0?timerObj.seconds-1:"00"})
-        if(timerObj.seconds==0 && timerObj.minutes>0){
-            return setTimerObj({...timerObj,seconds:59,minutes:timerObj.minutes-1})
-         }else if(timerObj.minutes==0 && timerObj.hours!==0){
-             return setTimerObj({seconds:59,minutes:59,hours:timerObj.hours==0?0:timerObj.hours-1})
-         }else if(timerObj.hours==0,timerObj.minutes==0,timerObj.seconds==0){
-             setStartTimer(false)
-             useUpdateWhenTimerPause({hours:preTimerObj.hours,minutes:preTimerObj.minutes,seconds:preTimerObj.seconds})
-            return ()=>{clearInterval(x)}
-         }
+      interValRef.current=setInterval(() => {
+      
+        let elapsedSeconds=Math.floor((Date.now()-preTime.current)/1000);
+        // console.log("countdownInseconds",(countDownTimeInSeconds.current-elapsedSeconds));
+        let updatedSeconds=Math.floor(countDownTimeInSeconds.current-elapsedSeconds);
+        let updateHours=Math.floor(updatedSeconds/3600);
+        let updateMinutes=Math.floor(updatedSeconds/60);
+        let updateOfSeconds=Math.floor(updatedSeconds%60)
+        setTimerObj({...timerObj,seconds:updateOfSeconds,hours:updateHours,minutes:updateMinutes})
+
+      }, 1000);
     }
-    },1000)
+   
     
-    return ()=>{clearInterval(x)}
-},[timerObj,startTimer])
+    return ()=>{clearInterval(interValRef.current)};
+},[startTimer])
+
 
 let handlePlayPauseBtn=()=>{
   setStartTimer(!startTimer);
+  preTime.current=Date.now();
   if(startTimer==true){
-    console.log("useUpdateWhenTimerPause(timerObj)",timerObj);
     let timerUpdateObj={
       hours:timerObj.hours,
       minutes:timerObj.minutes,
       seconds:timerObj.seconds
     }
+    countDownTimeInSeconds.current=Math.floor(timerObj.hours*3600)+Math.floor(timerObj.minutes*60)+Math.floor(timerObj.seconds)
    return useUpdateWhenTimerPause(timerObj.timerId,timerUpdateObj);
   }
  
@@ -49,12 +54,13 @@ let handlePlayPauseBtn=()=>{
 let resetTimerFunc=()=>{
     setStartTimer(false);
     setTimerObj({...countTimeObj,hours:countTimeObj.timerTitle.hours,minutes:countTimeObj.timerTitle.minutes,seconds:countTimeObj.timerTitle.seconds });
- 
+  
       let timerUpdateObj={
         hours:countTimeObj.timerTitle.hours,
         minutes:countTimeObj.timerTitle.minutes,
         seconds:countTimeObj.timerTitle.seconds 
       }
+      countDownTimeInSeconds.current=Math.floor(timerUpdateObj.hours*3600)+Math.floor(timerUpdateObj.minutes*60)+Math.floor(timerUpdateObj.seconds)
     return useUpdateWhenTimerPause(timerObj.timerId,timerUpdateObj);
 }
 
