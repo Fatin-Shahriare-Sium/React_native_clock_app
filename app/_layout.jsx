@@ -1,4 +1,4 @@
-import { LogBox, StyleSheet,Image,View, Platform } from 'react-native'
+import { StyleSheet} from 'react-native'
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -8,15 +8,10 @@ import clockIocn from "../assets/clock.png"
 import timerIcon from "../assets/timer.png"
 import stopWatchIcon from "../assets/stopWatch.png"
 import CustomTabIcon from '../components/customTabIcon'
-
+// eas build -p android --profile preview
 
 const _layout = () => {
  
-    useEffect(()=>{
-        LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-      
-  
-    },[])
   return (
     <ClockContextProvider>
      <StatusBar style="light" hidden={true} />
