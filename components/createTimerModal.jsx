@@ -9,7 +9,7 @@ const CreateTimerModal = ({handleModalFunc,isModalShow,setIsModalShow}) => {
             ref.current.focus()
         }
         if(type=="hours"){
-           return setCollectTimeObj({...collectTimeObj,hours:value>12?12:value})
+           return setCollectTimeObj({...collectTimeObj,hours:value>24?24:value})
         }else if(type=="minutes"){
             return setCollectTimeObj({...collectTimeObj,minutes:value>60?60:value})
         }else if(type=="seconds"){
@@ -24,6 +24,7 @@ const CreateTimerModal = ({handleModalFunc,isModalShow,setIsModalShow}) => {
                 <View style={styles.timerInputBoxOneWrapper}>
                 <TextInput 
                 ref={ref}
+                key="1"
                 style={styles.timerInputBox}
                 value={collectTimeObj.hours}
                     keyboardType='numeric'
@@ -34,6 +35,7 @@ const CreateTimerModal = ({handleModalFunc,isModalShow,setIsModalShow}) => {
                 </View>
                 <View style={styles.timerInputBoxOneWrapper}>
                 <TextInput 
+                 key="2"
                 style={styles.timerInputBox}
                 value={collectTimeObj.minutes}
                     keyboardType='numeric'
@@ -44,6 +46,7 @@ const CreateTimerModal = ({handleModalFunc,isModalShow,setIsModalShow}) => {
                 </View>
                 <View style={styles.timerInputBoxOneWrapper}>
                 <TextInput 
+                 key="3"
                 style={styles.timerInputBox}
                 value={collectTimeObj.seconds}
                     keyboardType='numeric'

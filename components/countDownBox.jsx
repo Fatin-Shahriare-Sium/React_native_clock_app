@@ -24,7 +24,7 @@ const CountDownBox = ({countTimeObj}) => {
         // console.log("countdownInseconds",(countDownTimeInSeconds.current-elapsedSeconds));
         let updatedSeconds=Math.floor(countDownTimeInSeconds.current-elapsedSeconds);
         let updateHours=Math.floor(updatedSeconds/3600);
-        let updateMinutes=Math.floor(updatedSeconds/60);
+        let updateMinutes=Math.floor((updatedSeconds%3600)/60);
         let updateOfSeconds=Math.floor(updatedSeconds%60)
         setTimerObj({...timerObj,seconds:updateOfSeconds,hours:updateHours,minutes:updateMinutes})
 
